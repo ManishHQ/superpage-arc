@@ -1,7 +1,19 @@
-const script = document.createElement('script');
-script.src = chrome.runtime.getURL('phantom-bridge.js');
-script.type = 'module';
-(document.head || document.documentElement).appendChild(script);
+import { createPopup } from '@/components/PaymentModal';
+
+function injectTailwindCSS(): Promise<void> {
+	return new Promise((resolve) => {
+		const id = 'superpage-tailwind-css';
+		if (document.getElementById(id)) return resolve();
+
+		const link = document.createElement('link');
+		link.id = id;
+		link.href =
+			'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css';
+		link.rel = 'stylesheet';
+		link.onload = () => resolve();
+		document.head.appendChild(link);
+	});
+}
 
 const waitForElement = (
 	selector: string,
@@ -14,7 +26,7 @@ const waitForElement = (
 				clearInterval(interval);
 				resolve(el);
 			}
-		}, 300);
+		}, 1000);
 
 		setTimeout(() => {
 			clearInterval(interval);
@@ -24,6 +36,7 @@ const waitForElement = (
 };
 
 const injectTipButton = async () => {
+	await injectTailwindCSS();
 	const ownerSection = await waitForElement('#owner');
 	if (!ownerSection) return;
 
@@ -31,18 +44,9 @@ const injectTipButton = async () => {
 
 	const button = document.createElement('button');
 	button.id = 'superpage-tip-btn';
-	button.innerText = '💸 Tip';
-	button.style.cssText = `
-      background-color: #8e44ad;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-size: 12px;
-      margin-left: 8px;
-      margin-top: 10px;
-      cursor: pointer;
-      border: none;
-    `;
+	button.textContent = '💸 Tip';
+	button.className =
+		'bg-blue-500 text-white px-5 py-2 rounded-md text-base ml-2 mt-2 hover:bg-blue-600 transition-all font-medium';
 
 	button.onclick = () => {
 		const channelName =
@@ -50,75 +54,7 @@ const injectTipButton = async () => {
 		createPopup(channelName);
 	};
 
-	// Append the tip button to the owner section (after subscribe button)
 	ownerSection.appendChild(button);
 };
 
 injectTipButton();
-
-const createPopup = (channelName: string) => {
-	if (document.getElementById('superpage-popup')) return;
-
-	const popup = document.createElement('div');
-	popup.id = 'superpage-popup';
-	popup.innerHTML = `
-	  <div style="
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		background: white;
-		border: 2px solid #8e44ad;
-		border-radius: 12px;
-		padding: 20px;
-		z-index: 9999;
-		width: 300px;
-		box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-	  ">
-		<h3 style="font-size: 16px; margin-bottom: 10px;">Tip ${channelName}</h3>
-		<input
-		  id="superpage-amount"
-		  type="number"
-		  placeholder="Amount in SOL"
-		  min="0.001"
-		  step="0.001"
-		  style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #ccc;"
-		/>
-		<div style="display: flex; justify-content: flex-end; gap: 10px;">
-		  <button id="superpage-cancel" style="background: #ccc; padding: 6px 12px; border-radius: 6px;">Cancel</button>
-		  <button id="superpage-send" style="background: #8e44ad; color: white; padding: 6px 12px; border-radius: 6px;">Send Tip</button>
-		</div>
-	  </div>
-	`;
-	document.body.appendChild(popup);
-
-	// Button actions
-	document.getElementById('superpage-cancel')?.addEventListener('click', () => {
-		popup.remove();
-	});
-
-	document.getElementById('superpage-send')?.addEventListener('click', () => {
-		const amountStr = (
-			document.getElementById('superpage-amount') as HTMLInputElement
-		).value;
-		const amount = parseFloat(amountStr);
-		if (!amount || amount < 0.001) {
-			alert('Enter a valid amount (min 0.001 SOL)');
-			return;
-		}
-
-		console.log('[SuperPay] Sending postMessage');
-
-		// For now: send fixed wallet
-		window.postMessage(
-			{
-				type: 'SUPERPAGE_TIP',
-				recipient: 'CmtShTafYxCfpAehyvNacWXwGeG2RL9Nvp7T5Q2DheGj', // 🪙 update this
-				lamports: amount * 1_000_000_000,
-			},
-			'*'
-		);
-
-		popup.remove();
-	});
-};
