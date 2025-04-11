@@ -1,0 +1,42 @@
+{
+	"manifest_version": 3,
+	"name": "SuperPay",
+	"description": "SuperPay is a payment extension that allows you to pay for your purchases with just one click.",
+	"version": "1.0.0",
+
+	"icons": {
+		"16": "images/superpay.png",
+		"32": "images/superpay.png",
+		"48": "images/superpay.png",
+		"128": "images/superpay.png"
+	},
+
+	"action": {
+		"default_popup": "popup.html",
+		"default_icon": {
+			"16": "images/superpay.png",
+			"32": "images/superpay.png",
+			"48": "images/superpay.png",
+			"128": "images/superpay.png"
+		}
+	},
+
+	"permissions": ["storage", "tabs", "activeTab", "scripting"],
+
+	"host_permissions": ["https://www.youtube.com/*"],
+
+	"content_scripts": [
+		{
+			"matches": ["https://www.youtube.com/*"],
+			"js": ["content.js"],
+			"run_at": "document_idle"
+		}
+	],
+
+	"web_accessible_resources": [
+		{
+			"resources": ["phantom-bridge.js", "content.js"],
+			"matches": ["<all_urls>"]
+		}
+	]
+}
