@@ -35,7 +35,7 @@
 
 	"web_accessible_resources": [
 		{
-			"resources": ["phantom-bridge.js", "content.js"],
+			"resources": ["phantomBridge.js", "content.js"],
 			"matches": ["<all_urls>"]
 		}
 	]

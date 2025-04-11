@@ -1,30 +1,20 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
-// https://vite.dev/config/
+const resolvePath = (p: string) => path.resolve(__dirname, p);
+
 export default defineConfig({
-	plugins: [react(), tailwindcss()],
-	resolve: {
-		alias: {
-			'@': path.resolve(__dirname, './src'),
-		},
-	},
+	plugins: [react()],
 	build: {
+		target: 'esnext',
 		outDir: 'dist',
+		emptyOutDir: true,
 		rollupOptions: {
 			input: {
-				popup: path.resolve(__dirname, 'public/popup.html'),
-				content: path.resolve(__dirname, 'src/content/content.ts'),
-				'phantom-bridge': path.resolve(
-					__dirname,
-					'src/injected/phantom-bridge.ts'
-				),
-			},
-			output: {
-				entryFileNames: '[name].js', // 👈 Ensures content.js and popup.js
+				popup: resolvePath('public/popup.html'),
 			},
 		},
+		// For popup HTML build only
 	},
 });
