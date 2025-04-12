@@ -3,6 +3,7 @@ import {
 	PublicKey,
 	SystemProgram,
 	Transaction,
+	clusterApiUrl,
 } from '@solana/web3.js';
 import { Buffer } from 'buffer';
 
@@ -28,10 +29,7 @@ window.Buffer = Buffer;
 				const provider = (window as any).solana;
 				await provider.connect();
 
-				const connection = new Connection(
-					'https://api.devnet.solana.com',
-					'confirmed'
-				);
+				const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 				const fromPubkey = provider.publicKey;
 
 				const transaction = new Transaction().add(
