@@ -1,23 +1,23 @@
 {
 	"manifest_version": 3,
-	"name": "SuperPay",
-	"description": "SuperPay is a payment extension that allows you to pay for your purchases with just one click.",
+	"name": "D-page",
+	"description": "D-page is a payment extension that allows you to pay for your purchases with just one click.",
 	"version": "1.0.0",
 
 	"icons": {
-		"16": "images/superpay.png",
-		"32": "images/superpay.png",
-		"48": "images/superpay.png",
-		"128": "images/superpay.png"
+		"16": "images/d-page.png",
+		"32": "images/d-page.png",
+		"48": "images/d-page.png",
+		"128": "images/d-page.png"
 	},
 
 	"action": {
 		"default_popup": "popup.html",
 		"default_icon": {
-			"16": "images/superpay.png",
-			"32": "images/superpay.png",
-			"48": "images/superpay.png",
-			"128": "images/superpay.png"
+			"16": "images/d-page.png",
+			"32": "images/d-page.png",
+			"48": "images/d-page.png",
+			"128": "images/d-page.png"
 		}
 	},
 
