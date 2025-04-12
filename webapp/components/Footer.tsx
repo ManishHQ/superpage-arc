@@ -11,7 +11,10 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
 
 	return (
 		<footer
-			className={cn('bg-white border-t border-gray-200 py-12', className)}
+			className={cn(
+				'bg-white border-t border-gray-200 py-12 w-full',
+				className
+			)}
 		>
 			<div className='container mx-auto px-4 md:px-6'>
 				{/* Main footer content */}

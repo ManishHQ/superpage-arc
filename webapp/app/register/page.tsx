@@ -113,7 +113,7 @@ export default function SignUpPage() {
 						Create your account
 					</CardTitle>
 					<CardDescription className='text-center'>
-						Enter your information to get started with SuperPage
+						Enter your information to get started with D-Page
 					</CardDescription>
 				</CardHeader>
 
@@ -157,7 +157,7 @@ export default function SignUpPage() {
 											/>
 										</FormControl>
 										<FormDescription className='text-xs'>
-											Your unique username for SuperPage
+											Your unique username for D-Page
 										</FormDescription>
 										<FormMessage />
 									</FormItem>

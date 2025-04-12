@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ChevronDown, LogOut, User, Settings } from 'lucide-react';
 import axios from '@/lib/axios';
+import Image from 'next/image';
 
 interface MainNavProps {
 	className?: string;
@@ -124,8 +125,17 @@ const MainNav: React.FC<MainNavProps> = ({ className }) => {
 			)}
 		>
 			<div className='flex items-center justify-between'>
-				<Link href='/' className='font-bold text-xl text-primary'>
-					D-Page
+				<Link
+					href='/'
+					className='flex items-center gap-2 font-bold text-xl text-primary'
+				>
+					<Image
+						src='/images/d-page.png'
+						alt='D-Page Logo'
+						width={32}
+						height={32}
+						className='w-8 h-8 object-contain'
+					/>
 				</Link>
 
 				<div className='flex items-center space-x-4'>

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: 'SuperPage',
+	title: 'D-Page',
 	description: 'Your front page on internet and web3',
 };
 

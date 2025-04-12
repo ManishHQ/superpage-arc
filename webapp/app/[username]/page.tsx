@@ -324,7 +324,7 @@ export default function UserProfilePage() {
 
 				<div className='mt-12 text-center'>
 					<p className='text-sm text-muted-foreground mt-1'>
-						Powered by <span className='font-medium'>SuperPage</span>
+						Powered by <span className='font-medium'>D-Page</span>
 					</p>
 				</div>
 			</div>

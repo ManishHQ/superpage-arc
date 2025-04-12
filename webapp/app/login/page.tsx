@@ -84,7 +84,7 @@ export default function SignInPage() {
 						Welcome back
 					</CardTitle>
 					<CardDescription className='text-center'>
-						Sign in to your SuperPage account
+						Sign in to your D-Page account
 					</CardDescription>
 				</CardHeader>
 

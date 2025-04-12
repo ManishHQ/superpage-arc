@@ -27,7 +27,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ className }) => {
 			<div className='relative z-10 container mx-auto px-4 py-12 sm:px-6 lg:px-8 text-center'>
 				<div className='max-w-3xl mx-auto'>
 					<h1 className='text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-primary'>
-						Superpage: The Future of Creator Economies.
+						D-Page: The Future of Creator Economies.
 					</h1>
 
 					<p className='text-xl text-gray-700 mb-10 max-w-2xl mx-auto'>
@@ -42,18 +42,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ className }) => {
 							Get Started for Free
 							<ArrowRight className='ml-2 h-5 w-5' />
 						</Button>
-
-						<Button
-							size='lg'
-							variant='outline'
-							className='text-primary border-primary hover:bg-primary/10 text-lg px-8 py-6'
-						>
-							See Examples
-						</Button>
-					</div>
-
-					<div className='mt-12 text-sm text-gray-500'>
-						<p>No credit card required • Free 14-day trial • Cancel anytime</p>
 					</div>
 				</div>
 			</div>

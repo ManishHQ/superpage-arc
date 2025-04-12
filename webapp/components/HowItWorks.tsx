@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/card';
 
 const howItWorks = [
 	{
-		title: 'Create Your Superpage Profile',
+		title: 'Create Your D-Page Profile',
 		description:
 			'Creators, begin by setting up your personalized Superpa.ge profile. Link all your social media accounts to consolidate your online presence. Share your links easily, making it simple for fans to find all your content.',
 		icon: <UserRoundPlus className='h-6 w-6' />,
@@ -48,7 +48,7 @@ export default function HowItWorks() {
 						How It Works
 					</h2>
 					<p className='mt-3 sm:mt-4 text-muted-foreground max-w-2xl mx-auto px-4'>
-						Superpage makes supporting creators simple and direct through web3
+						D-Page makes supporting creators simple and direct through web3
 						technology.
 					</p>
 				</div>
