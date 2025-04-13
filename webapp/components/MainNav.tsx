@@ -151,7 +151,7 @@ const MainNav: React.FC<MainNavProps> = ({ className }) => {
 								</Button>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent align='end' className='w-56'>
-								<Link href={`/@${user.username}`}>
+								<Link href={`/${user.username}/profile`}>
 									<DropdownMenuItem className='cursor-pointer'>
 										<User className='mr-2 h-4 w-4' />
 										<span>My Profile</span>

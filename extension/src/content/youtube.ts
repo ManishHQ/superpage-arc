@@ -40,7 +40,6 @@ function injectCustomStyles(): void {
         }
         
         .superpage-btn-icon {
-            margin-right: 6px;
             display: inline-block;
         }
         

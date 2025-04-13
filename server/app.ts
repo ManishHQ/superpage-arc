@@ -12,6 +12,7 @@ dotenv.config();
 // route imports
 import authRoutes from './routes/auth';
 import profileRoutes from './routes/profile';
+import transactionRoutes from './routes/transaction';
 
 // init app
 const app = express();
@@ -49,6 +50,7 @@ app.use(express.json());
 // routes
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 // not found
 app.use('*', notFound);

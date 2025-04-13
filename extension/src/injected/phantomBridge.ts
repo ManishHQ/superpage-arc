@@ -4,6 +4,7 @@ import {
 	SystemProgram,
 	Transaction,
 	clusterApiUrl,
+	TransactionInstruction,
 } from '@solana/web3.js';
 import { Buffer } from 'buffer';
 
@@ -21,6 +22,8 @@ window.Buffer = Buffer;
 		if (event.data?.type === 'SUPERPAGE_TIP') {
 			const recipient = new PublicKey(event.data.recipient);
 			const lamports = event.data.lamports;
+			const message = event.data.message || 'SuperPay Tip';
+
 			console.log(
 				`[SuperPay] Sending ${lamports} lamports to ${recipient.toBase58()}`
 			);
@@ -32,12 +35,23 @@ window.Buffer = Buffer;
 				const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 				const fromPubkey = provider.publicKey;
 
+				// Create a memo instruction using Solana Cookbook pattern
+				const memoInstruction = new TransactionInstruction({
+					keys: [],
+					programId: new PublicKey(
+						'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'
+					),
+					data: Buffer.from(message, 'utf-8'),
+				});
+
+				// Create transaction with both transfer and memo
 				const transaction = new Transaction().add(
 					SystemProgram.transfer({
 						fromPubkey,
 						toPubkey: recipient,
 						lamports,
-					})
+					}),
+					memoInstruction
 				);
 
 				transaction.feePayer = fromPubkey;

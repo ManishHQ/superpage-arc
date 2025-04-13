@@ -15,8 +15,10 @@ import {
 	Linkedin,
 	Github,
 	Loader2,
+	ArrowDownRight,
+	ArrowDownUp,
 } from 'lucide-react';
-
+import { Badge } from '@/components/ui/badge';
 import {
 	Card,
 	CardContent,
@@ -108,6 +110,7 @@ export default function ProfilePage() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
+	const [transactions, setTransactions] = useState<any[]>([]);
 	const router = useRouter();
 	let { username } = useParams();
 	username = getUsername(username);
@@ -165,6 +168,18 @@ export default function ProfilePage() {
 		};
 
 		fetchProfile();
+	}, []);
+
+	useEffect(() => {
+		axios
+			.get('/transactions/me')
+			.then((res) => {
+				console.log('Transactions:', res.data);
+				setTransactions(res.data.data.transactions || []);
+			})
+			.catch((err) => {
+				console.error('Failed to fetch transactions:', err);
+			});
 	}, []);
 
 	// Modify the onSubmit function to handle both creation and updates
@@ -563,10 +578,59 @@ export default function ProfilePage() {
 								</CardDescription>
 							</CardHeader>
 							<CardContent>
-								<div className='text-center py-10'>
-									<p className='text-gray-500'>
-										No recent activity to display.
-									</p>
+								<div className='space-y-4'>
+									{transactions && transactions.length > 0 ? (
+										transactions.map((transaction) => (
+											<div
+												key={transaction._id}
+												className='bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow'
+											>
+												<div className='flex justify-between items-center'>
+													<div className='flex items-center gap-3'>
+														<div className='bg-green-100 p-2 rounded-full'>
+															<ArrowDownRight className='h-4 w-4 text-green-600' />
+														</div>
+														<div>
+															<p className='font-medium'>
+																Received {transaction.amount} SOL
+															</p>
+															<p className='text-sm text-gray-500'>
+																{new Date(
+																	parseInt(
+																		transaction._id.substring(0, 8),
+																		16
+																	) * 1000
+																).toLocaleDateString()}
+															</p>
+														</div>
+													</div>
+													<Badge
+														variant='outline'
+														className='text-green-600 bg-green-50'
+													>
+														+{transaction.amount} SOL
+													</Badge>
+												</div>
+												{transaction.message && (
+													<div className='mt-2 ml-12 text-sm text-gray-600 bg-gray-50 p-2 rounded-md'>
+														"{transaction.message}"
+													</div>
+												)}
+											</div>
+										))
+									) : (
+										<div className='text-center py-8'>
+											<div className='bg-gray-100 rounded-full p-4 inline-block mb-3'>
+												<ArrowDownUp className='h-6 w-6 text-gray-400' />
+											</div>
+											<h3 className='text-lg font-medium'>
+												No transactions yet
+											</h3>
+											<p className='text-gray-500 mt-1'>
+												When someone sends you SOL, it will appear here.
+											</p>
+										</div>
+									)}
 								</div>
 							</CardContent>
 						</Card>
