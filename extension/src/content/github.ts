@@ -49,7 +49,6 @@ const injectTipButton = async () => {
 	button.className = 'superpage-btn';
 	button.innerHTML = `
         <span class="superpage-btn-icon">💸</span>
-        <span class="superpage-tooltip">Support with Solana</span>
     `;
 
 	// Get the comment container which contains the author info

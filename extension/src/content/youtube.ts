@@ -94,7 +94,6 @@ const injectTipButton = async () => {
         <span class="superpage-btn-icon">
 			💸
         </span>
-        <span class="superpage-tooltip">Support with Solana</span>
     `;
 
 	button.onclick = (e) => {
