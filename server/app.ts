@@ -12,8 +12,6 @@ dotenv.config();
 // route imports
 import authRoutes from './routes/auth';
 import profileRoutes from './routes/profile';
-// import hederaRoutes from './routes/wallets/hedera';
-import stellarRoutes from './routes/wallets/stellar';
 
 // init app
 const app = express();
@@ -30,9 +28,11 @@ app.use(
 	cors({
 		origin: [
 			'http://localhost:3000',
-			'chrome-extension://hfikebhkbbmbngalhmdlbgicambjpljg',
+			'chrome-extension://eggpalanlpejcpdcijlfblmahgbhpafk',
+			'brave://extensions/?id=eggpalanlpejcpdcijlfblmahgbhpafk',
 			'https://www.youtube.com',
 			'https://youtube.com',
+			'https://github.com',
 		],
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
 		allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -47,10 +47,6 @@ app.use(express.json());
 // routes
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
-
-// wallets routes
-// app.use('/api/wallets/hedera', hederaRoutes);
-app.use('/api/wallets/stellar', stellarRoutes);
 
 // not found
 app.use('*', notFound);
