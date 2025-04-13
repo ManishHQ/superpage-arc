@@ -94,3 +94,7 @@ npm install && npm run build
 cd ../server
 npm install && npm run dev
 ```
+
+## 📼 Demo
+
+Watch our demo video: [D-Page: Web3 Tipping Protocol](https://youtu.be/KT_zJ55H8og)
