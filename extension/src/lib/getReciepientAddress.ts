@@ -22,6 +22,5 @@ export const getRecipientAddress = async (
 	}
 
 	const data = await response.json();
-	console.log(data);
-	return data.recipient;
+	return data;
 };

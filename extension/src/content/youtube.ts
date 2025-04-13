@@ -1,9 +1,5 @@
 import { createPopup } from '@/components/PaymentModal';
-import {
-	injectTailwindCSS,
-	waitForElement,
-	injectPhantomBridge,
-} from '@/injected/common';
+import { waitForElement, injectPhantomBridge } from '@/injected/common';
 
 injectPhantomBridge();
 
@@ -83,7 +79,6 @@ function injectCustomStyles(): void {
 }
 
 const injectTipButton = async () => {
-	await injectTailwindCSS();
 	injectCustomStyles();
 
 	const ownerSection = await waitForElement('#owner');
@@ -100,7 +95,6 @@ const injectTipButton = async () => {
         <span class="superpage-btn-icon">
 			💸
         </span>
-        Tip
         <span class="superpage-tooltip">Support with Solana</span>
     `;
 

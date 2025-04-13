@@ -1,18 +1,3 @@
-export function injectTailwindCSS(): Promise<void> {
-	return new Promise((resolve) => {
-		const id = 'superpage-tailwind-css';
-		if (document.getElementById(id)) return resolve();
-
-		const link = document.createElement('link');
-		link.id = id;
-		link.href =
-			'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css';
-		link.rel = 'stylesheet';
-		link.onload = () => resolve();
-		document.head.appendChild(link);
-	});
-}
-
 export function injectCustomStyles(): void {
 	const id = 'superpage-custom-styles';
 	if (document.getElementById(id)) return;

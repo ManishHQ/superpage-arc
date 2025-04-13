@@ -1,7 +1,6 @@
 // github.ts
 import { createPopup } from '@/components/PaymentModal';
 import {
-	injectTailwindCSS,
 	injectCustomStyles,
 	injectPhantomBridge,
 	waitForElement,
@@ -36,7 +35,6 @@ const getUsername = (contextElement?: Element | null): string => {
 };
 
 const injectTipButton = async () => {
-	await injectTailwindCSS();
 	injectCustomStyles();
 
 	// Only inject the profile tip button once
@@ -51,7 +49,6 @@ const injectTipButton = async () => {
 	button.className = 'superpage-btn';
 	button.innerHTML = `
         <span class="superpage-btn-icon">💸</span>
-        Tip
         <span class="superpage-tooltip">Support with Solana</span>
     `;
 

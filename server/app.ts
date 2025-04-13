@@ -30,6 +30,8 @@ app.use(
 			'http://localhost:3000',
 			'chrome-extension://eggpalanlpejcpdcijlfblmahgbhpafk',
 			'brave://extensions/?id=eggpalanlpejcpdcijlfblmahgbhpafk',
+			'chrome-extension://eggpalanlpejcpdcijlfblmahgbhpafk',
+			'brave://extensions/?id=eggpalanlpejcpdcijlfblmahgbhpafk',
 			'https://www.youtube.com',
 			'https://youtube.com',
 			'https://github.com',
