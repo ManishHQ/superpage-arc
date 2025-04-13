@@ -8,7 +8,7 @@ import {
 import { PublicKey, Connection, clusterApiUrl, Keypair } from '@solana/web3.js';
 import BigNumber from 'bignumber.js';
 import { Buffer } from 'buffer';
-
+import { getRecipientAddress } from '@/lib/getReciepientAddress';
 // Make sure Buffer is available globally
 if (typeof window !== 'undefined') {
 	window.Buffer = Buffer;
@@ -17,121 +17,138 @@ if (typeof window !== 'undefined') {
 // Solana connection for devnet or mainnet
 const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-export const createPopup = (channelName: string) => {
+export const createPopup = (username: string, platform: string) => {
+	let loading = true;
+	const recipient = getRecipientAddress(username, platform)
+		.then((data) => {
+			console.log('user: ', data);
+			loading = false;
+			return data.user.walletAddress;
+		})
+		.catch((error) => {
+			console.error('Error fetching recipient address:', error);
+			showToast('Error fetching recipient address. Please try again.', 'error');
+			return null;
+		});
 	if (document.getElementById('superpage-popup')) return;
-	console.log(`[SuperPay] Opening tip modal for ${channelName}`);
+	console.log(`[SuperPay] Opening tip modal for ${username}`);
 
-	// Create backdrop
-	const backdrop = document.createElement('div');
-	backdrop.id = 'superpage-backdrop';
-	backdrop.className =
-		'fixed inset-0 bg-black bg-opacity-50 z-[9998] backdrop-blur-sm';
-	document.body.appendChild(backdrop);
-
-	// Create modal
-	const popup = document.createElement('div');
-	popup.id = 'superpage-popup';
-	popup.className =
-		'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-xl p-6 z-[9999] w-[360px] shadow-2xl animate-fade-in';
-
-	popup.innerHTML = `
-      <style>
-        @keyframes fade-in {
-          0% { opacity: 0; transform: translate(-50%, -60%) scale(0.95); }
-          100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .qr-appear {
-          animation: qr-appear 0.4s forwards;
-        }
-        @keyframes qr-appear {
-          0% { opacity: 0; max-height: 0; }
-          100% { opacity: 1; max-height: 300px; }
-        }
-      </style>
-      
-      <!-- Header with logo -->
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center">
-          <div class="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-              <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold text-gray-800 dark:text-white">SuperPay</h3>
-        </div>
-        <button id="superpage-close" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-          </svg>
-        </button>
-      </div>
-      
-      <!-- Content -->
-      <div class="mb-6">
-        <p class="text-center mb-4 text-gray-600 dark:text-gray-300">Send a tip to <span class="font-semibold text-purple-600">${channelName}</span></p>
-        
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount</label>
-          <div class="relative rounded-md shadow-sm">
-            <input id="superpage-amount" type="number" placeholder="0.05" min="0.001" step="0.001"
-              class="w-full pl-3 pr-12 py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:text-white" />
-            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-              <span class="text-gray-500 dark:text-gray-400">SOL</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Action buttons -->
-      <div class="space-y-3">
-        <button id="superpage-use-extension" 
-          class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-3 rounded-md hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 font-medium flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-            <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
-          </svg>
-          Pay with Phantom Extension
-        </button>
-        
-        <button id="superpage-send" 
-          class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 font-medium flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 6h1m-7 7v1m-6-6H4" />
-          </svg>
-          Generate QR Code
-        </button>
-      </div>
-      
-      <!-- QR Code container -->
-      <div id="qr-code" class="hidden mt-5 justify-center items-center flex-col">
-        <div class="p-3 bg-white rounded-lg shadow-md">
-          <!-- QR will be inserted here -->
-        </div>
-        <p class="text-sm text-center text-gray-500 mt-3">Scan with a Solana Pay compatible wallet</p>
-      </div>
-    `;
-	document.body.appendChild(popup);
-
-	// Close button handler
-	document.getElementById('superpage-close')?.addEventListener('click', () => {
+	const closePopup = () => {
 		document.getElementById('superpage-backdrop')?.remove();
 		popup.remove();
-	});
+	};
 
-	// Close on backdrop click
+	// if no recipient, show user is not registered in d-page
+	if (!recipient) {
+		showToast(
+			'This user is not registered on SuperPay. Please try again later.',
+			'error'
+		);
+		closePopup();
+	}
+
+	if (loading) {
+		showToast('Loading recipient address...', 'info');
+	}
+
+	// Backdrop
+	const backdrop = document.createElement('div');
+	backdrop.id = 'superpage-backdrop';
+	backdrop.style.cssText = `
+			position: fixed; inset: 0;
+			background: rgba(0, 0, 0, 0.5);
+			z-index: 9998;
+			backdrop-filter: blur(4px);
+		`;
+	document.body.appendChild(backdrop);
+
+	// Modal
+	const popup = document.createElement('div');
+	popup.id = 'superpage-popup';
+	popup.style.cssText = `
+			position: fixed;
+			top: 50%; left: 50%; transform: translate(-50%, -50%);
+			background: white;
+			border-radius: 12px;
+			padding: 24px;
+			z-index: 9999;
+			width: 360px;
+			box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+			animation: fade-in 0.3s ease;
+		`;
+
+	popup.innerHTML = `
+			<style>
+				@keyframes fade-in {
+					0% { opacity: 0; transform: translate(-50%, -60%) scale(0.95); }
+					100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+				}
+				.qr-appear {
+					animation: qr-appear 0.4s forwards;
+				}
+				@keyframes qr-appear {
+					0% { opacity: 0; max-height: 0; }
+					100% { opacity: 1; max-height: 300px; }
+				}
+				.super-btn {
+					padding: 12px;
+					border-radius: 8px;
+					font-weight: bold;
+					border: none;
+					cursor: pointer;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					gap: 6px;
+					width: 100%;
+				}
+				.super-btn.primary {
+					background: linear-gradient(to right, #8b5cf6, #6366f1);
+					color: white;
+				}
+				.super-btn.secondary {
+					border: 1px solid #ccc;
+					background: #fff;
+					color: #333;
+				}
+			</style>
+			<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+				<div style="display:flex;align-items:center;gap:8px">
+					<div style="background:#8b5cf6;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center">💸</div>
+					<h3 style="margin:0;font-size:18px;font-weight:600">D-Page</h3>
+				</div>
+				<button id="superpage-close" style="background:none;border:none;color:#999;font-size:18px;">✕</button>
+			</div>
+			<div>
+				<p style="text-align:center;color:#666;margin-bottom:16px">Send a tip to <strong style="color:#8b5cf6">${username}</strong></p>
+				<label style="font-size:14px;color:#444">Amount</label>
+				<div style="position:relative;margin-top:4px;margin-bottom:24px">
+					<input id="superpage-amount" type="number" min="0.001" step="0.001" placeholder="0.05"
+						style="width:100%;padding:10px 40px 10px 12px;border:1px solid #ccc;border-radius:8px;font-size:14px;">
+					<span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#999;font-size:14px;">SOL</span>
+				</div>
+			</div>
+			<div style="display:flex;flex-direction:column;gap:12px">
+				<button id="superpage-use-extension" class="super-btn primary">
+					<span>Pay with Phantom Extension</span>
+				</button>
+				<button id="superpage-send" class="super-btn secondary">
+					<span>Generate QR Code</span>
+				</button>
+			</div>
+			<div id="qr-code" class="qr-appear" style="display:none;flex-direction:column;align-items:center;margin-top:24px">
+				<div id="qr-img"></div>
+				<p style="font-size:12px;color:#888;margin-top:8px">Scan with a Solana Pay compatible wallet</p>
+			</div>
+		`;
+	document.body.appendChild(popup);
+
 	document
-		.getElementById('superpage-backdrop')
-		?.addEventListener('click', () => {
-			document.getElementById('superpage-backdrop')?.remove();
-			popup.remove();
-		});
+		.getElementById('superpage-close')
+		?.addEventListener('click', closePopup);
+	backdrop.addEventListener('click', closePopup);
 
 	// Make these changes in the existing file
-
 	document
 		.getElementById('superpage-use-extension')
 		?.addEventListener('click', () => {
@@ -241,7 +258,7 @@ export const createPopup = (channelName: string) => {
 			window.postMessage(
 				{
 					type: 'SUPERPAGE_TIP',
-					recipient: 'CmtShTafYxCfpAehyvNacWXwGeG2RL9Nvp7T5Q2DheGj',
+					recipient,
 					lamports: amount * 1_000_000_000,
 				},
 				'*'
@@ -264,7 +281,18 @@ export const createPopup = (channelName: string) => {
 				// Generate a unique reference for this payment
 				const reference = Keypair.generate().publicKey;
 				const recipient = new PublicKey(
-					'CmtShTafYxCfpAehyvNacWXwGeG2RL9Nvp7T5Q2DheGj'
+					await getRecipientAddress(username, platform)
+						.then((data) => {
+							return data.user.walletAddress;
+						})
+						.catch((error) => {
+							console.error('Error fetching recipient address:', error);
+							showToast(
+								'Error fetching recipient address. Please try again.',
+								'error'
+							);
+							return null;
+						})
 				);
 
 				const url = encodeURL({

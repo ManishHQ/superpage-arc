@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, Loader2, Upload, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -27,13 +28,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { register } from '@/api/auth';
+import { toast } from 'sonner';
 
 // Form validation schema matching the User interface
 const signUpSchema = z.object({
@@ -53,6 +49,8 @@ const signUpSchema = z.object({
 		.string()
 		.min(8, { message: 'Password must be at least 8 characters' })
 		.max(100, { message: 'Password must be less than 100 characters' }),
+	avatar: z.string().optional().default(''),
+	walletAddress: z.string(),
 });
 
 export default function SignUpPage() {
@@ -60,6 +58,10 @@ export default function SignUpPage() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [isPhantomConnected, setIsPhantomConnected] = useState(false);
+	const [solanaAddress, setSolanaAddress] = useState('');
 
 	const form = useForm<z.infer<typeof signUpSchema>>({
 		resolver: zodResolver(signUpSchema),
@@ -68,8 +70,70 @@ export default function SignUpPage() {
 			username: '',
 			email: '',
 			password: '',
+			avatar: '',
+			walletAddress: '',
 		},
 	});
+
+	// Check if Phantom wallet is installed and accessible
+	useEffect(() => {
+		const checkPhantomWallet = async () => {
+			// @ts-ignore
+			const isPhantomInstalled = window.phantom?.solana?.isPhantom;
+			if (isPhantomInstalled) {
+				try {
+					// @ts-ignore
+					const response = await window.phantom?.solana?.connect({
+						onlyIfTrusted: true,
+					});
+					const address = response.publicKey.toString();
+					setSolanaAddress(address);
+					form.setValue('walletAddress', address);
+					setIsPhantomConnected(true);
+				} catch (error) {
+					console.log(
+						"User hasn't connected to Phantom yet or auto-connect is turned off"
+					);
+				}
+			}
+		};
+
+		checkPhantomWallet();
+	}, [form]);
+
+	const connectPhantomWallet = async () => {
+		try {
+			// @ts-ignore
+			const response = await window.phantom?.solana?.connect();
+			const address = response.publicKey.toString();
+			setSolanaAddress(address);
+			form.setValue('walletAddress', address);
+			setIsPhantomConnected(true);
+		} catch (error) {
+			console.error('Failed to connect to Phantom wallet', error);
+		}
+	};
+
+	// Handle avatar upload
+	const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (event.target.files && event.target.files[0]) {
+			const file = event.target.files[0];
+			const reader = new FileReader();
+
+			reader.onload = (e) => {
+				if (e.target?.result) {
+					setAvatarPreview(e.target.result as string);
+					form.setValue('avatar', e.target.result as string);
+				}
+			};
+
+			reader.readAsDataURL(file);
+		}
+	};
+
+	const triggerFileInput = () => {
+		fileInputRef.current?.click();
+	};
 
 	async function onSubmit(values: z.infer<typeof signUpSchema>) {
 		setIsLoading(true);
@@ -80,17 +144,22 @@ export default function SignUpPage() {
 			username: values.username,
 			email: values.email,
 			password: values.password,
+			avatar: values.avatar,
+			walletAddress: values.walletAddress,
 		})
 			.then((res) => {
 				console.log(res.data);
 				// save the token
 				localStorage.setItem('token', res.token);
 				router.push(`/${res.data.username}/profile`);
-				return res;
 			})
 			.catch((err) => {
-				console.error(err.response?.data?.message || 'Failed to register');
 				setError(err.response?.data?.message || 'Failed to register');
+				console.log(err.response.data.message);
+				// show the error in sonner
+				toast.error(`${err.response?.data?.message}`, {
+					duration: 5000,
+				});
 			})
 			.finally(() => {
 				setIsLoading(false);
@@ -126,6 +195,38 @@ export default function SignUpPage() {
 
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+							{/* Avatar Upload */}
+							<FormItem className='flex flex-col items-center justify-center'>
+								<FormLabel>Profile Picture</FormLabel>
+								<div
+									className='w-24 h-24 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer overflow-hidden'
+									onClick={triggerFileInput}
+								>
+									{avatarPreview ? (
+										<Image
+											src={avatarPreview}
+											alt='Avatar preview'
+											width={96}
+											height={96}
+											className='w-full h-full object-cover'
+										/>
+									) : (
+										<Upload className='w-8 h-8 text-gray-400' />
+									)}
+								</div>
+								<input
+									type='file'
+									ref={fileInputRef}
+									onChange={handleAvatarChange}
+									accept='image/*'
+									className='hidden'
+									disabled={isLoading}
+								/>
+								<FormDescription className='text-xs text-center'>
+									Click to upload a profile picture (optional)
+								</FormDescription>
+							</FormItem>
+
 							<FormField
 								control={form.control}
 								name='name'
@@ -215,6 +316,51 @@ export default function SignUpPage() {
 										</div>
 										<FormDescription className='text-xs'>
 											Must be at least 8 characters
+										</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							{/* Phantom Wallet Connection */}
+							<FormField
+								control={form.control}
+								name='walletAddress'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Solana Wallet Address (Optional)</FormLabel>
+										<div className='flex gap-2'>
+											<FormControl>
+												<Input
+													readOnly
+													placeholder='Connect Phantom wallet'
+													{...field}
+													value={
+														solanaAddress
+															? shortenAddress(solanaAddress)
+															: field.value
+													}
+													disabled={isLoading}
+												/>
+											</FormControl>
+											<Button
+												type='button'
+												onClick={connectPhantomWallet}
+												disabled={isLoading || isPhantomConnected}
+												className='whitespace-nowrap'
+											>
+												{isPhantomConnected ? (
+													<>
+														<Check className='h-4 w-4 mr-2' />
+														Connected
+													</>
+												) : (
+													<>Connect Wallet</>
+												)}
+											</Button>
+										</div>
+										<FormDescription className='text-xs'>
+											Connect your Phantom wallet to receive rewards (optional)
 										</FormDescription>
 										<FormMessage />
 									</FormItem>

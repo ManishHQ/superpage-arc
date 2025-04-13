@@ -23,16 +23,20 @@
 
 	"permissions": ["storage", "tabs", "activeTab", "scripting"],
 
-	"host_permissions": ["https://www.youtube.com/*"],
+	"host_permissions": ["https://www.youtube.com/*", "https://github.com/*"],
 
 	"content_scripts": [
 		{
 			"matches": ["https://www.youtube.com/*"],
-			"js": ["content.js"],
+			"js": ["youtube.js"],
+			"run_at": "document_idle"
+		},
+		{
+			"matches": ["https://github.com/*"],
+			"js": ["github.js"],
 			"run_at": "document_idle"
 		}
 	],
-
 	"web_accessible_resources": [
 		{
 			"resources": ["phantomBridge.js", "content.js"],

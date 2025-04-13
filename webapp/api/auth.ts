@@ -10,6 +10,7 @@ export interface RegisterUser {
 	username: string;
 	email: string;
 	password: string;
+	avatar: string;
 	walletAddress: string;
 }
 
@@ -26,17 +27,16 @@ export const register = async ({
 	username,
 	email,
 	password,
-}: {
-	name: string;
-	username: string;
-	email: string;
-	password: string;
-}) => {
+	avatar,
+	walletAddress,
+}: RegisterUser) => {
 	const response = await axios.post('/auth/register', {
 		name,
 		username,
 		email,
 		password,
+		avatar,
+		walletAddress,
 	});
 	return response.data;
 };

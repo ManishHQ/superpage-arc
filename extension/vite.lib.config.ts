@@ -4,13 +4,16 @@ import path from 'path';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => {
-	const input =
-		mode === 'bridge'
-			? path.resolve(__dirname, 'src/injected/phantomBridge.ts')
-			: path.resolve(__dirname, 'src/content/content.ts');
+	const entryMap: Record<string, string> = {
+		phantomBridge: 'src/injected/phantomBridge.ts',
+		youtube: 'src/content/youtube.ts',
+		github: 'src/content/github.ts',
+	};
 
-	const isBridge = mode === 'bridge';
-	const name = isBridge ? 'phantomBridge' : 'content';
+	// Fallback to YouTube if mode is unknown
+	const entryFile = entryMap[mode] || entryMap.youtube;
+	const name = mode in entryMap ? mode : 'youtube';
+
 	return {
 		plugins: [react(), tsconfigPaths()],
 		build: {
@@ -18,13 +21,13 @@ export default defineConfig(({ mode }) => {
 				'@': path.resolve(__dirname, 'src'),
 			},
 			lib: {
-				entry: input,
+				entry: path.resolve(__dirname, entryFile),
 				formats: ['iife'],
 				name,
-				fileName: () => `${isBridge ? 'phantomBridge' : 'content'}.js`,
+				fileName: () => `${name}.js`,
 			},
 			outDir: 'dist',
-			emptyOutDir: false, // keep popup assets
+			emptyOutDir: false, // keep popup and other build assets
 			rollupOptions: {
 				output: {
 					entryFileNames: `${name}.js`,

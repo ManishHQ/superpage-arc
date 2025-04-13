@@ -1,5 +1,5 @@
 {
-	"name": "superpay",
+	"name": "d-page",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
@@ -8,9 +8,10 @@
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
 		"preview": "vite preview",
-		"build:content": "vite build --mode=content --config vite.lib.config.ts",
-		"build:bridge": "vite build --mode=bridge --config vite.lib.config.ts",
-		"build:all": "npm run build && npm run build:content && npm run build:bridge"
+		"build:phantomBridge": "vite build --config vite.lib.config.ts --mode phantomBridge",
+		"build:youtube": "vite build --config vite.lib.config.ts --mode youtube",
+		"build:github": "vite build --config vite.lib.config.ts --mode github",
+		"build:all": "npm run build:phantomBridge && npm run build:youtube && npm run build:github"
 	},
 	"dependencies": {
 		"@radix-ui/react-checkbox": "^1.1.4",

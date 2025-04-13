@@ -51,6 +51,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useParams, useRouter } from 'next/navigation';
 import { getUsername } from '@/lib/getUsername';
+import { toast } from 'sonner';
 
 // Define the Profile interface
 interface Profile {
@@ -108,7 +109,6 @@ export default function ProfilePage() {
 	const [error, setError] = useState<string | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
 	const router = useRouter();
-	const [wallet, setWallet] = useState<any | null>(null);
 	let { username } = useParams();
 	username = getUsername(username);
 
@@ -136,11 +136,6 @@ export default function ProfilePage() {
 				const userResponse = await axios.get('/auth/current-user');
 				setUser(userResponse.data.data);
 				console.log(userResponse.data.data);
-
-				// get wallet
-				const walletResponse = await axios.get('/wallets/stellar/get-wallet');
-				setWallet(walletResponse.data.data.stellar.accountId);
-				console.log(walletResponse.data.data.stellar.accountId);
 
 				// Then get profile
 				const profileResponse = await axios.get(`/profile/${username}`);
@@ -172,30 +167,37 @@ export default function ProfilePage() {
 		fetchProfile();
 	}, []);
 
-	const createWallet = async () => {
-		try {
-			const response = await axios.post('/wallets/stellar/create-account');
-			console.log('Wallet created:', response.data.data);
-			setWallet(response.data.data.publicKey);
-		} catch (err) {
-			console.error('Failed to create wallet:', err);
-			setError('Failed to create wallet. Please try again.');
-		}
-	};
+	// Modify the onSubmit function to handle both creation and updates
 
 	const onSubmit = async (values: z.infer<typeof profileSchema>) => {
 		setIsSaving(true);
 
 		try {
-			const response = await axios.post('/profile', values);
-			console.log('Profile updated:', response.data);
-			router.push(`/${user.username}`);
-			setProfile(response.data);
+			let response;
+
+			// If profile exists, update it; otherwise create a new one
+			if (profile?._id) {
+				response = await axios.patch(`/profile/${username}/socials`, values);
+				console.log('Profile updated:', response.data);
+			} else {
+				response = await axios.post('/profile', values);
+				console.log('Profile created:', response.data);
+			}
+
+			// Update the local profile state
+			setProfile(response.data.data || response.data);
+
+			// Show success message
+			toast.success('Profile saved successfully!');
 			setError(null);
 			setIsEditing(false);
 		} catch (err) {
 			console.error('Failed to update profile:', err);
 			setError('Failed to update profile. Please try again.');
+
+			// Show error toast
+			// @ts-ignore
+			toast.error(err.response?.data?.message || 'Failed to update profile');
 		} finally {
 			setIsSaving(false);
 		}
@@ -526,30 +528,6 @@ export default function ProfilePage() {
 														</FormItem>
 													)}
 												/>
-											</div>
-										</div>
-										<div>
-											{/* create wallet as well */}
-											<h3 className='text-lg font-medium mb-3'>Wallet</h3>
-											<div>
-												{/* button to create wallet */}
-
-												{!wallet ? (
-													<Button
-														variant='outline'
-														className='bg-primary hover:bg-primary/85 hover:text-white text-white h-10 cursor-pointer'
-														onClick={createWallet}
-														type='button'
-													>
-														<Globe size={16} className='text-white' />
-														Create Wallet
-													</Button>
-												) : (
-													<div className='flex items-center gap-2 text-gray-700'>
-														<Globe size={16} />
-														<span>{wallet}</span>
-													</div>
-												)}
 											</div>
 										</div>
 									</CardContent>

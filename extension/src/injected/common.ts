@@ -1,6 +1,4 @@
-import { createPopup } from '@/components/PaymentModal';
-
-function injectTailwindCSS(): Promise<void> {
+export function injectTailwindCSS(): Promise<void> {
 	return new Promise((resolve) => {
 		const id = 'superpage-tailwind-css';
 		if (document.getElementById(id)) return resolve();
@@ -15,7 +13,7 @@ function injectTailwindCSS(): Promise<void> {
 	});
 }
 
-function injectCustomStyles(): void {
+export function injectCustomStyles(): void {
 	const id = 'superpage-custom-styles';
 	if (document.getElementById(id)) return;
 
@@ -85,30 +83,27 @@ function injectCustomStyles(): void {
             0% { transform: scale(0.95); }
             50% { transform: scale(1.05); }
             100% { transform: scale(0.95); }
-        }
-    `;
+			}
+			`;
 	document.head.appendChild(style);
 }
 
-function injectPhantomBridge(): void {
+export function injectPhantomBridge(): void {
 	const id = 'phantom-bridge-script';
 	if (document.getElementById(id)) return;
 
 	const script = document.createElement('script');
 	script.id = id;
-	script.src = chrome.runtime.getURL('phantomBridge.js'); // ✅ matches renamed file
+	script.src = chrome.runtime.getURL('phantomBridge.js');
 	script.type = 'module';
 	(document.head || document.documentElement).appendChild(script);
 }
 
-injectPhantomBridge();
-
-const waitForElement = (
+export function waitForElement(
 	selector: string,
 	timeout = 5000
-): Promise<Element | null> => {
+): Promise<Element | null> {
 	return new Promise((resolve) => {
-		// Check if element already exists
 		const existingElement = document.querySelector(selector);
 		if (existingElement) {
 			resolve(existingElement);
@@ -121,80 +116,11 @@ const waitForElement = (
 				clearInterval(interval);
 				resolve(el);
 			}
-		}, 500); // Check more frequently
+		}, 500);
 
 		setTimeout(() => {
 			clearInterval(interval);
 			resolve(null);
 		}, timeout);
 	});
-};
-
-const injectTipButton = async () => {
-	await injectTailwindCSS();
-	injectCustomStyles();
-
-	const ownerSection = await waitForElement('#owner');
-	if (!ownerSection) return;
-
-	if (document.getElementById('superpage-tip-btn')) return;
-
-	const button = document.createElement('button');
-	button.id = 'superpage-tip-btn';
-	button.className = 'superpage-btn';
-
-	// Better inner content with SVG icon
-	button.innerHTML = `
-        <span class="superpage-btn-icon">
-			💸
-        </span>
-        Tip
-        <span class="superpage-tooltip">Support with Solana</span>
-    `;
-
-	button.onclick = (e) => {
-		e.stopPropagation(); // Prevent YouTube click events from interfering
-
-		// Visual feedback on click
-		button.style.transform = 'scale(0.95)';
-		setTimeout(() => {
-			button.style.transform = '';
-		}, 100);
-
-		// Get channel name more reliably with fallbacks
-		const channelName =
-			document.querySelector('#text > a')?.textContent ||
-			document.querySelector('.ytd-channel-name a')?.textContent ||
-			document.querySelector('[itemprop="author"] [itemprop="name"]')
-				?.textContent ||
-			'this creator';
-
-		createPopup(channelName);
-	};
-
-	// Insert button in a better position
-	const metaArea = ownerSection.querySelector('#meta') || ownerSection;
-	metaArea.appendChild(button);
-
-	// Log for debugging
-	console.log('[SuperPay] Tip button injected successfully');
-};
-
-// Initial injection
-injectTipButton();
-
-// Handle navigation on YouTube's SPA
-const observer = new MutationObserver((mutations) => {
-	mutations.forEach((mutation) => {
-		if (
-			mutation.type === 'childList' &&
-			document.location.pathname.includes('/watch')
-		) {
-			// YouTube navigation detected, try to re-inject the button
-			setTimeout(injectTipButton, 1000);
-		}
-	});
-});
-
-// Start observing the target node for configured mutations
-observer.observe(document.body, { childList: true, subtree: true });
+}
