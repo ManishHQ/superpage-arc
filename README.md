@@ -66,4 +66,3 @@ cd ../server
 npm install && npm run dev
 📼 Demo
 Watch our demo video: SuperPage: Web3 Tipping Protocol
-Visit us at: https://superpa.ge
