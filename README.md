@@ -1,7 +1,6 @@
 ⚡ SuperPage
 
-The decentralized tipping protocol for the modern creator economy — powered by Web3.
-
+The decentralized tipping protocol for the modern creator economy — powered by Solana, SolanaPay.
 
 🔥 What is SuperPage?
 SuperPage is a Web3-based social tipping platform that empowers creators to receive crypto tips directly on their GitHub, YouTube, X (Twitter), LinkedIn, and other pages — without gatekeepers, ads, or high platform fees.
@@ -19,11 +18,10 @@ SuperPage solves this with:
 ✅ Creator dashboard to manage tips, analytics, and social links
 ✅ NFT "Supporter Moments" and Creator Tokens (coming soon)
 
-
 ⚙️ Tech Stack
 LayerTechnology UsedFrontendReact.js + Tailwind + Shadcn UIExtensionManifest V3 + Phantom WalletBackendNode.js + PostgreSQLBlockchainSolana (testnet)Smart ContractsSolana Program (Rust) (upcoming)StorageIPFS / Arweave (upcoming)
 
-🚀 MVP Launch Plan (May 2025)
+🚀 MVP Launch Plan (September 2025)
 
 ✅ GitHub Tipping via Chrome Extension
 ✅ Creator registration via dashboard
@@ -32,15 +30,12 @@ LayerTechnology UsedFrontendReact.js + Tailwind + Shadcn UIExtensionManifest V3 
 🔜 Tip modal with real crypto transactions
 🔜 Public alpha release
 
-
 🧠 Core Features
 
 💸 Direct Tips – Send crypto to creators via GitHub profiles
 🧾 Dashboard – View earnings, connect handles, export data
-🧩 Multichain – Supporting Solana, SUI, Stellar (cross-chain future)
 🏆 NFT Moments – Mint collectible supporter badges
 🧠 DAO Governance – Protocol evolves through community voting
-
 
 💰 Revenue Model
 SuperPage sustains itself via:
@@ -51,17 +46,22 @@ NFT royalty marketplace
 Creator token launchpad
 Strategic partnerships + API licensing
 
-
 🛠 Getting Started (Contributors)
 bash# 1. Clone the repo
 git clone https://github.com/superpage/superpage.git
+
 # 2. Navigate to dashboard
+
 cd webapp
 npm install && npm run dev
+
 # 3. Navigate to extension
+
 cd ../extension
 npm install && npm run build
+
 # 4. Start server
+
 cd ../server
 npm install && npm run dev
 📼 Demo
