@@ -10,23 +10,23 @@
 
 ## Key Features:
 
-* **Direct-to-Creator Tipping:** "Our Chrome extension integrates seamlessly with existing social platforms, enabling fans to support creators directly with cryptocurrency. This bypasses platform fees and ensures creators receive the full value of their contributions."
+- **Direct-to-Creator Tipping:** "Our Chrome extension integrates seamlessly with existing social platforms, enabling fans to support creators directly with cryptocurrency. This bypasses platform fees and ensures creators receive the full value of their contributions."
 
-* **Unified Creator Profiles:** "Creators can consolidate their entire online presence on Superpa.ge, linking all their social channels (YouTube, GitHub, Twitch, etc.). This provides a single, discoverable hub for their audience."
+- **Unified Creator Profiles:** "Creators can consolidate their entire online presence on Superpa.ge, linking all their social channels (YouTube, GitHub, Twitch, etc.). This provides a single, discoverable hub for their audience."
 
-* **Web3 Powered Transactions:** "Built on the Stellar network, Superpa.ge offers transparent, secure, and low-cost transactions. This eliminates the need for intermediaries and empowers both creators and fans."
+- **Web3 Powered Transactions:** "Built on the Stellar network, Superpa.ge offers transparent, secure, and low-cost transactions. This eliminates the need for intermediaries and empowers both creators and fans."
 
 ## Future Vision:
 
 "We're not just fixing the present; we're building the future of the creator economy. Our roadmap includes:"
 
-* **NFT Monetization:** "Creators will be able to mint NFTs from their social media content, creating new revenue streams and allowing fans to own a piece of their favorite creator's work. Fans can invest in the creator's content."
+- **NFT Monetization:** "Creators will be able to mint NFTs from their social media content, creating new revenue streams and allowing fans to own a piece of their favorite creator's work. Fans can invest in the creator's content."
 
-* **Recurring Subscriptions:** "We'll enable creators to offer tiered subscriptions, providing exclusive content and perks to their most dedicated supporters."
+- **Recurring Subscriptions:** "We'll enable creators to offer tiered subscriptions, providing exclusive content and perks to their most dedicated supporters."
 
-* **Creator Stores:** "Creators can set up their own decentralized stores, selling merchandise and digital products directly to their audience."
+- **Creator Stores:** "Creators can set up their own decentralized stores, selling merchandise and digital products directly to their audience."
 
-* **Multi-Platform Support:** "We're expanding beyond social media to support creators on platforms like GitHub and Twitch, providing a unified monetization solution across the creator ecosystem."
+- **Multi-Platform Support:** "We're expanding beyond social media to support creators on platforms like GitHub and Twitch, providing a unified monetization solution across the creator ecosystem."
 
 ## Team:
 
@@ -34,5 +34,7 @@
 
 ## Links:
 
-* **Server Repo:** https://github.com/theidealmanish/superpage-server
-* **Extension Repo:** https://github.com/theidealmanish/superpage-extension
+- **Server Repo:** https://github.com/theidealmanish/superpage-server
+- **Extension Repo:** https://github.com/theidealmanish/superpage-extension
+
+**Thank you**
